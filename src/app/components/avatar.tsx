@@ -1,31 +1,38 @@
 'use client';
 
 import React from 'react';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
+import * as THREE from 'three';
 import Model from './Model';
+
+const Rig = () => {
+    const { camera } = useThree();
+    return useFrame(() => {
+        camera.position.lerp(new THREE.Vector3(0, 2, -2), 0);
+        camera.lookAt(0, 1, 0);
+    });
+}
 
 export default function Avatar() {
     const gltfCanvasRef = React.useRef<HTMLDivElement>(null)
     return (
         <div
             ref={gltfCanvasRef}
-            style={{height:1000}}
+            style={{height:500}}
         >
             <Canvas
-                frameloop="demand"
-                camera={{ fov:20,near:0.1,far:300,position:[0,1,-10]}}
-                flat
+                camera={{ position:[0,5,-5]}}
             >
-                <directionalLight position={[1,1,-1]} color={"0xffffff"} />
+                <PerspectiveCamera makeDefault position={[0, 2, -2]} />
+                <directionalLight position={[1,20,-1]} color={"0xffffff"} />
                 <Model />
                 <color attach="background" args={["#000000"]} />
+                <gridHelper/>
                 <OrbitControls 
                     enableZoom={false}
-                    enablePan={false}
-                    enableDamping={false}
                 />
-                <gridHelper/>
+                <Rig />
             </Canvas>
         </div>
     )
