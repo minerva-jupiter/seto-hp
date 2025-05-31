@@ -45,6 +45,9 @@ export default function RootLayout({
                 <li className="nav-item">
                   <a className="nav-link" href="https://www.staffsearch.shimane-u.ac.jp/kenkyu/search/3d57492f13a5ff11d57e2a307cd68dcd/detail">島根大学教員情報検索</a>
                 </li>
+                <li className="nav-item">
+                  <a href="https://www.ds.shimane-u.ac.jp/" className="nav-link">島根大学数理・データサイエンス教育研究センター</a>
+                </li>
               </ul>
             </div>
           </div>
