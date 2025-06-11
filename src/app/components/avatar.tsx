@@ -25,9 +25,9 @@ export default function Avatar() {
                 camera={{ position:[0,5,-5]}}
             >
                 <PerspectiveCamera makeDefault position={[0, 2, -2]} />
-                <directionalLight position={[1,20,-1]} color={"0xffffff"} />
+                <directionalLight position={[0,10,-5]} color={"0xffffff"} />
                 <Model />
-                <color attach="background" args={["#000000"]} />
+                <color attach="background" args={["#ff00ff"]} />
                 <gridHelper/>
                 <OrbitControls 
                     enableZoom={false}

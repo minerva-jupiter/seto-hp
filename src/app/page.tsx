@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Avatar from "./components/avatar";
 
 export default function Home() {

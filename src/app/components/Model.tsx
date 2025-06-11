@@ -3,6 +3,8 @@ import { FC, useState, useEffect } from "react"
 import { Html} from "@react-three/drei"
 import { GLTFLoader, GLTF } from "three/examples/jsm/loaders/GLTFLoader"
 import { VRMLoaderPlugin } from "@pixiv/three-vrm"
+import { VRMAnimationLoaderPlugin } from "@pixiv/three-vrm-animation"
+
 
 
 const Model: FC = () => {
@@ -14,7 +16,10 @@ const Model: FC = () => {
       const loader = new GLTFLoader()
       loader.register((parser) => {
         return new VRMLoaderPlugin(parser)
-      })
+      });
+      loader.register((parser) => {
+        return new VRMAnimationLoaderPlugin(parser)
+      });
 
       loader.load(
         "/models/Setok.vrm",
@@ -33,6 +38,54 @@ const Model: FC = () => {
           console.log(error)
         }
       )
+      let currentVrm: any = undefined;
+      let currentVrmAnimation: any = undefined;
+      let currentMixer:any = undefined;
+      function load(url: string) {
+        loader.load(
+            url,
+            // ロード時に呼ばれる
+            (gltf) => {
+                tryInitVRM(gltf);
+                tryInitVRMA(gltf);
+            },
+            // プログレス時に呼ばれる
+            (progress) => console.log( 
+              "Loading model...", 
+              100.0 * (progress.loaded / progress.total), "%" 
+            ),
+            // エラー時に呼ばれる
+            (error) => console.error(error)
+        );
+      }
+      function tryInitVRM(gltf: any) {
+        const vrm = gltf.userData.vrm;
+        if ( vrm == null ) {
+            return;
+        }
+        currentVrm = vrm;
+        scene.add(vrm.scene);
+        initAnimationClip();
+      }
+
+      // VRMAの読み込み
+      function tryInitVRMA(gltf: any) {
+        const vrmAnimations = gltf.userData.vrmAnimations;
+        if (vrmAnimations == null) {
+            return;
+        }
+        currentVrmAnimation = vrmAnimations[0] ?? null;
+        initAnimationClip();
+      }
+      function initAnimationClip() {
+        if (currentVrm && currentVrmAnimation) {
+            currentMixer = new THREE.AnimationMixer(currentVrm.scene);
+            const clip = createVRMAnimationClip(currentVrmAnimation, currentVrm);
+            currentMixer.clipAction(clip).play();
+        }
+      }
+      // https://note.com/npaka/n/nf632f283f89a
+      load("/animations/VRMA_01.vrma")
     }
   }, [gltf])
 
